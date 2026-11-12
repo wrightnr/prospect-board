@@ -57,9 +57,13 @@ th[data-k]::after{content:' ↕';opacity:0;font-size:10px}th[data-k]:hover::afte
 .acc div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .acc b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.acc span{color:var(--mute);font-size:12px}
 .acch{color:var(--mute);font-size:12.5px;margin:2px 0 6px}
+nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:none;white-space:nowrap}.dr th{cursor:pointer}.dr tr.rd td{border-top:2px solid var(--ink)}.up{color:var(--t1);font-weight:600}.dn{color:var(--bad);font-weight:600}.mu{color:var(--mute)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}.seg button{font:inherit;border:0;background:none;color:var(--mute);padding:8px 12px;cursor:pointer}.seg button.on{background:var(--ink);color:var(--bg)}
+#dcls,#dpos,#drnd,#dtm{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.r1{color:var(--t1);font-weight:600}.r2{color:var(--t2)}.r3{color:var(--t3)}
 </style></head><body>
 <header><div class="hd"><div><h1 id="ttl">RB Prospect Board</h1><div class="sub" id="sub">College production model for dynasty running backs · updated Nov 12, 2026</div></div><div class="pos" id="posw"><button id="pQB" class="on">QB</button><button id="pRB">RB</button><button id="pWR">WR</button><button id="pTE">TE</button></div></div></header>
-<nav><button id="tDevy" class="on">Devy Tracker</button><button id="tModel">Model</button><button id="tNfl">NFL Results</button><button id="tHow">How It Works</button></nav>
+<nav><button id="tDevy" class="on">Devy Tracker</button><button id="tModel">Model</button><button id="tNfl">NFL Results</button><button id="tDraft">Rookie Draft</button><button id="tHow">How It Works</button></nav>
 <main id="howm" class="how" style="display:none">
 <section><h2>What this is</h2><p>A dynasty prospect model for quarterbacks, running backs, wide receivers and tight ends that grades players from their first college season through the NFL draft, and checks every call against what actually happened in the NFL. College and NFL stats update automatically every Tuesday.</p></section>
 <section><h2>The process</h2><ol>
@@ -69,8 +73,14 @@ th[data-k]::after{content:' ↕';opacity:0;font-size:10px}th[data-k]:hover::afte
 <li><b>Projected PPG and chances</b> &mdash; turns the Final Grade into an expected PPR points per game over NFL years 1&ndash;3, and the odds of reaching three tiers: RB1 or WR1 (about a top-12 finish), RB2 or WR2 (about top 24), and Flex or WR3 (about top 36). Running back tiers use PPG averages; receiver, tight end and quarterback tiers use the best single-season finish.</li></ol>
 <p>On the Devy Tracker, <b>Pctl vs Drafted</b> compares a player with drafted players at the same point in their college careers, and <b>Band</b> groups that percentile.</p></section>
 <section><h2>Checking the calls</h2><p><b>Model Call</b> is the model&rsquo;s pre-draft read: Likely hit, Toss-up or Long shot to become a starter-level dynasty asset on his rookie deal. Running backs are judged on their average over NFL years 1&ndash;3 (12+ PPR points per game, about an RB24), since they produce right away. Receivers, tight ends and quarterbacks are judged on their best season in years 1&ndash;3 (a top-24 WR, top-12 TE or top-12 QB finish), since most need time to break out or earn the job. Once three NFL seasons are complete, the <b>Verdict</b> compares that call with reality: Hit called, Correct fade, Bust, Missed sleeper, or a toss-up result.</p><p><b>Year 2&ndash;3 Outlook</b> updates the call after a player&rsquo;s rookie season, combining the Final Grade with what he did as a rookie: <b>Locked in</b>, <b>Regression risk</b>, <b>Breakout candidate</b>, <b>Watch</b> or <b>Fading</b>. A strong pre-draft grade after a quiet rookie year is the classic breakout setup; a rookie hit the model never liked is the classic sell-high.</p></section>
-<section><h2>How accurate is it?</h2><div id="howacc"></div>
+<section><h2>Rookie Draft</h2><p>The Rookie Draft tab turns the model into a draft order for every class since 2016, with all four positions on one board, in superflex or 1QB. Each class is checked against the FantasyPros expert consensus taken right after the NFL draft, and, once three NFL seasons are in, against what the players actually produced.</p></section><section><h2>How accurate is it?</h2><div id="howacc"></div>
 <p>R-squared runs from 0 to 1 and measures how much of the spread in NFL Y1&ndash;3 PPG each phase explains. Each step adds accuracy on top of the last. Results on future draft classes will likely run a little lower than these historical numbers, and NFL outcomes also depend on injuries, landing spot and opportunity, which no pre-draft model can see. When you filter to a small group, check how many players are in it before trusting a hit rate.</p></section>
+</main>
+<main id="draftm" style="display:none">
+<div class="bar"><select id="dcls" aria-label="Draft class"></select><div class="seg" id="dfmt"><button data-f="SF" class="on">Superflex</button><button data-f="1QB">1QB</button></div><select id="drnd" aria-label="Rounds"><option value="3">3 rounds</option><option value="4">4 rounds</option><option value="5">5 rounds</option><option value="0">All rookies</option></select><select id="dtm" aria-label="League size"><option value="10">10 teams</option><option value="12" selected>12 teams</option><option value="14">14 teams</option></select><select id="dpos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select><input id="dq" placeholder="Search player or school"><span class="count" id="dcnt"></span></div>
+<div class="sum" id="dsum"></div>
+<div class="wrap"><table id="dtbl" class="dr"></table></div>
+<div class="notes" id="dnotes"><b>Pick</b> is the slot in your rookie draft (choose rounds and league size above) using our board, which combines our model with the post-draft consensus. <b>Consensus</b> is where FantasyPros experts ranked the player among this class right after the NFL draft (for the newest class during draft season, their latest ranking; DynastyProcess open data). During rookie-draft season (mid-April through June) this board updates every morning as NFL picks and rankings come in; <b>vs Consensus</b> shows how many spots higher (&#9650;) or lower (&#9660;) we are. <b>Consensus Now</b> is today&rsquo;s dynasty ranking within the class. <b>NFL Result</b> ranks the class by fantasy points scored above a starter-level line at each position over NFL years 1&ndash;3 (QB24 in superflex, QB12 in 1QB, RB30, WR42, TE14); &ldquo;&ndash;&rdquo; means no starter-level production yet.</div>
 </main>
 <main id="mainm">
 <div id="accw" style="display:none"><div class="acch" id="acch"></div><div class="acc" id="acc"></div></div>
@@ -187,4 +197,45 @@ function fetchPos(q){if(DATA[q]||busy[q])return;busy[q]=true;
  $('p'+q).disabled=true;$('p'+q).textContent='Loading…';want[q]=true;fetchPos(q)}});
 ['RB','WR','TE','QB'].filter(q=>q!==P0).forEach((q,i)=>setTimeout(()=>fetchPos(q),1500+i*2500));
 window.addEventListener('resize',pinCols);
+// ----- Rookie Draft tab -----
+let DR=null,dF='SF',dSort=null,dDir=1,dBusy=false,dPrev=null;
+let dT=12;const pk=n=>n?Math.ceil(n/dT)+'.'+String((n-1)%dT+1).padStart(2,'0'):'';
+function showDraft(on){$('draftm').style.display=on?'':'none';$('tDraft').classList.toggle('on',!!on);$('posw').style.display=on?'none':'';
+ if(on){$('howm').style.display='none';$('mainm').style.display='none';['tDevy','tModel','tNfl','tHow'].forEach(t=>$(t).classList.remove('on'));
+  if(!dPrev)dPrev=[$('ttl').textContent,$('sub').textContent];$('ttl').textContent='Rookie Draft Board';$('sub').textContent='Our rookie draft order for every class, against expert consensus and what actually happened · updated Nov 12, 2026';loadDraft()}
+ else if(dPrev){$('ttl').textContent=dPrev[0];$('sub').textContent=dPrev[1];dPrev=null}}
+function loadDraft(){if(DR){drawDraft();return}if(dBusy)return;dBusy=true;$('dtbl').innerHTML='<tr><td style="padding:30px 16px;color:var(--mute)">Loading rookie draft…</td></tr>';
+ getPos('DRAFT',x=>{dBusy=false;try{const d=JSON.parse(x);DR={rows:d.r.map(a=>{const o={};d.h.forEach((c,i)=>o[c]=a[i]);return o}),acc:d.acc||[]}}catch(e){DR={rows:[],acc:[]}}
+  const ys=[...new Set(DR.rows.map(r=>r.yr))].sort((a,b)=>b-a);$('dcls').innerHTML=ys.map(y=>'<option value="'+y+'">'+y+' class</option>').join('');drawDraft()},
+  e=>{dBusy=false;$('dtbl').innerHTML='<tr><td style="padding:30px 16px;color:var(--mute)">The rookie draft did not load. Tap Rookie Draft to try again.</td></tr>'})}
+function dCap(rows,n,k){return rows}
+function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q=$('dq').value.toLowerCase();
+ let r=DR.rows.filter(o=>o.yr===y&&o.f===dF);const all=r;
+ dT=+$('dtm').value;const nr=+$('drnd').value;
+ r=r.filter(o=>(!nr||o.our<=nr*dT)&&(!ps||o.pos===ps)&&(!q||(o.p+' '+o.col).toLowerCase().includes(q)));
+ const key={pick:'our',player:'p',pos:'pr',col:'col',nfl:'nfl',mk:'mk',diff:'_d',now:'now',vr:'vr'};
+ r.forEach(o=>o._d=o.mk!==''?o.mk-o.our:'');
+ if(dSort){const k=key[dSort];r=r.slice().sort((a,b)=>{const x=a[k],z=b[k];if(x===''&&z==='')return 0;if(x==='')return 1;if(z==='')return -1;const n=!isNaN(x)&&!isNaN(z)&&x!==''&&z!=='';return (n?x-z:String(x).localeCompare(String(z),undefined,{numeric:true}))*dDir})}
+ else r=r.slice().sort((a,b)=>a.our-b.our);
+ const st=(all.find(o=>o.st)||{}).st||'',hasV=all.some(o=>o.vr!==''),hasM=all.some(o=>o.mk!==''),hasN=all.some(o=>o.now!=='');
+ const cols=[['pick','Pick','num'],['player','Player','name'],['pos','Pos',''],['col','College',''],['nfl','NFL Pick','num']].concat(hasM?[['mk','Consensus','num'],['diff','vs Consensus','num']]:[]).concat(hasN?[['now','Consensus Now','num']]:[]).concat(hasV?[['vr','NFL Result','num']]:[]);
+ const cell=(c,o)=>{switch(c){case'pick':return pk(o.our);case'player':return o.p;case'pos':return o.pr;case'col':return o.col;case'nfl':return o.nfl===''?'':typeof o.nfl==='number'?o.nfl:String(o.nfl);
+  case'mk':return o.mk===''?'<span class="mu">NR</span>':pk(o.mk);case'diff':{const d=o._d;return d===''?'':d>0?'<span class="up">&#9650;'+d+'</span>':d<0?'<span class="dn">&#9660;'+(-d)+'</span>':'<span class="mu">=</span>'}
+  case'now':return o.now===''?'':'#'+o.now;case'vr':return o.vr===''?'<span class="mu">&ndash;</span>':'<span class="'+(o.vr<=12?'r1':o.vr<=24?'r2':'r3')+'">#'+o.vr+'</span>'}};
+ $('dtbl').innerHTML='<thead><tr>'+cols.map(c=>'<th class="'+c[2]+'" data-k="'+c[0]+'">'+c[1]+(dSort===c[0]?(dDir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
+  r.map((o,i)=>'<tr'+(!dSort&&!ps&&!q&&i>0&&o.our%dT===1?' class="rd"':'')+'>'+cols.map(c=>'<td class="'+c[2]+'">'+cell(c[0],o)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+ $('dtbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(dSort===k)dDir=-dDir;else{dSort=k;dDir=(k==='player'||k==='col'||k==='pos')?1:1}drawDraft()});
+ $('dcnt').textContent=r.length+' rookies';
+ const A=DR.acc.filter(a=>a[1]===dF),a=A.find(x=>x[0]===y),pc=v=>v===''?'-':Math.round(v*100)+'%',C=A.filter(x=>x[6]==='Complete');
+ let s='';
+ if(a)s='<b>'+y+(a[6]==='Complete'?' result':' so far ('+String(a[6]).replace('In progress (','').replace(')','')+')')+':</b> the first round of our board (top 12) landed <b>'+pc(a[2])+'</b> of the best possible first-round value, consensus <b>'+pc(a[3])+'</b>. Through two rounds: ours <b>'+pc(a[4])+'</b>, consensus <b>'+pc(a[5])+'</b>.';
+ else if(st)s='<b>'+y+':</b> NFL results so far ('+st.replace('In progress (','').replace(')','')+').';
+ else s='<b>'+y+':</b> no NFL games yet.';
+ if(A.length){const m=i=>A.reduce((t,x)=>t+(+x[i]||0),0)/A.length;s+=' <span class="mu">All '+A.length+' classes with NFL results ('+C.length+' complete): first round ours '+pc(m(2))+' vs consensus '+pc(m(3))+'; two rounds ours '+pc(m(4))+' vs '+pc(m(5))+'.</span>'}
+ $('dsum').innerHTML=s}
+$('tDraft').onclick=()=>{showDraft(1);try{history.replaceState(null,'','#draft')}catch(e){}};['tDevy','tModel','tNfl','tHow'].forEach(t=>$(t).addEventListener('click',()=>{if(location.hash==='#draft')try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}));if(location.hash==='#draft')setTimeout(()=>showDraft(1),0);['tDevy','tModel','tNfl','tHow'].forEach(t=>$(t).addEventListener('click',()=>showDraft(0)));
+$('dcls').oninput=()=>{dSort=null;drawDraft()};$('dpos').oninput=drawDraft;$('drnd').oninput=drawDraft;$('dtm').oninput=drawDraft;$('dq').oninput=drawDraft;
+$('dfmt').querySelectorAll('button').forEach(b=>b.onclick=()=>{dF=b.dataset.f;$('dfmt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawDraft()});
+setTimeout(()=>{if(!DR&&!dBusy)getPos('DRAFT',x=>{if(DR)return;try{const d=JSON.parse(x);DR={rows:d.r.map(a=>{const o={};d.h.forEach((c,i)=>o[c]=a[i]);return o}),acc:d.acc||[]};const ys=[...new Set(DR.rows.map(r=>r.yr))].sort((a,b)=>b-a);$('dcls').innerHTML=ys.map(y=>'<option value="'+y+'">'+y+' class</option>').join('')}catch(e){}},()=>{})},12000);
+
 </script></body></html>
