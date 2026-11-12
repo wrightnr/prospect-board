@@ -57,7 +57,7 @@ th[data-k]::after{content:' ↕';opacity:0;font-size:10px}th[data-k]:hover::afte
 .acc div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .acc b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.acc span{color:var(--mute);font-size:12px}
 .acch{color:var(--mute);font-size:12.5px;margin:2px 0 6px}
-nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:none;white-space:nowrap}.dr th{cursor:pointer}.dr tr.rd td{border-top:2px solid var(--ink)}.up{color:var(--t1);font-weight:600}.dn{color:var(--bad);font-weight:600}.mu{color:var(--mute)}
+nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:none;white-space:nowrap}.dr th{cursor:pointer}.dr tr.rd td{border-top:2px solid var(--ink)}.guide{margin:0 0 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 14px}.guide summary{cursor:pointer;font-weight:600}.guide dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:10px 0 6px}.guide dt{font-weight:600}.guide dd{margin:0}@media(max-width:600px){.guide dl{grid-template-columns:1fr}.guide dd{margin-bottom:6px}}.up{color:var(--t1);font-weight:600}.dn{color:var(--bad);font-weight:600}.mu{color:var(--mute)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}.seg button{font:inherit;border:0;background:none;color:var(--mute);padding:8px 12px;cursor:pointer}.seg button.on{background:var(--ink);color:var(--bg)}
 #dcls,#dpos,#drnd,#dtm{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
 .r1{color:var(--t1);font-weight:600}.r2{color:var(--t2)}.r3{color:var(--t3)}
@@ -78,9 +78,19 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav
 </main>
 <main id="draftm" style="display:none">
 <div class="bar"><select id="dcls" aria-label="Draft class"></select><div class="seg" id="dfmt"><button data-f="SF" class="on">Superflex</button><button data-f="1QB">1QB</button></div><select id="drnd" aria-label="Rounds"><option value="3">3 rounds</option><option value="4">4 rounds</option><option value="5">5 rounds</option><option value="0">All rookies</option></select><select id="dtm" aria-label="League size"><option value="10">10 teams</option><option value="12" selected>12 teams</option><option value="14">14 teams</option></select><select id="dpos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select><input id="dq" placeholder="Search player or school"><span class="count" id="dcnt"></span></div>
+<details class="guide" id="dguide"><summary>How to read this board</summary><dl>
+<dt>Pick</dt><dd>Where we&rsquo;d take the player in your rookie draft (set rounds and league size above). Our board combines our prospect model with the expert consensus.</dd>
+<dt>Pos</dt><dd>Position and rank at that position on our board (WR2 = second WR we&rsquo;d take).</dd>
+<dt>NFL Pick</dt><dd>Overall pick in the NFL draft. Before the draft, a projection.</dd>
+<dt>Consensus</dt><dd>Where FantasyPros experts ranked the player within this class right after the NFL draft, shown as a draft slot. For the newest class during draft season (April&ndash;August) it&rsquo;s their latest ranking.</dd>
+<dt>vs Consensus</dt><dd>How far our board is from the experts: <span class="up">&#9650;3</span> = we&rsquo;re 3 spots higher on him, <span class="dn">&#9660;3</span> = 3 spots lower, = means we agree.</dd>
+<dt>Consensus Now</dt><dd>His rank within the class in today&rsquo;s FantasyPros dynasty rankings (updated weekly), so you can see how opinions have moved since the draft.</dd>
+<dt>NFL Result</dt><dd>His rank in the class for actual NFL fantasy value: PPR points scored above a starter-level line at his position (QB24 in superflex, QB12 in 1QB, RB30, WR42, TE14), added up over NFL years 1&ndash;3. <span class="r1">Green</span> = top 12 (first-round value), <span class="r2">amber</span> = 13&ndash;24, gray = later; &ndash; = no starter-level season yet. Classes still in their first three years show results so far.</dd>
+<dt>Summary line</dt><dd>For past classes: how much of the best possible first-round (and two-round) value our board&rsquo;s picks actually delivered, compared with the consensus picks.</dd>
+</dl><p class="mu">Rankings data: FantasyPros expert consensus via DynastyProcess. NFL stats: nflverse. During rookie-draft season (mid-April through June) this board updates every morning.</p></details>
 <div class="sum" id="dsum"></div>
 <div class="wrap"><table id="dtbl" class="dr"></table></div>
-<div class="notes" id="dnotes"><b>Pick</b> is the slot in your rookie draft (choose rounds and league size above) using our board, which combines our model with the post-draft consensus. <b>Consensus</b> is where FantasyPros experts ranked the player among this class right after the NFL draft (for the newest class during draft season, their latest ranking; DynastyProcess open data). During rookie-draft season (mid-April through June) this board updates every morning as NFL picks and rankings come in; <b>vs Consensus</b> shows how many spots higher (&#9650;) or lower (&#9660;) we are. <b>Consensus Now</b> is today&rsquo;s dynasty ranking within the class. <b>NFL Result</b> ranks the class by fantasy points scored above a starter-level line at each position over NFL years 1&ndash;3 (QB24 in superflex, QB12 in 1QB, RB30, WR42, TE14); &ldquo;&ndash;&rdquo; means no starter-level production yet.</div>
+
 </main>
 <main id="mainm">
 <div id="accw" style="display:none"><div class="acch" id="acch"></div><div class="acc" id="acc"></div></div>
@@ -218,11 +228,12 @@ function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q
  if(dSort){const k=key[dSort];r=r.slice().sort((a,b)=>{const x=a[k],z=b[k];if(x===''&&z==='')return 0;if(x==='')return 1;if(z==='')return -1;const n=!isNaN(x)&&!isNaN(z)&&x!==''&&z!=='';return (n?x-z:String(x).localeCompare(String(z),undefined,{numeric:true}))*dDir})}
  else r=r.slice().sort((a,b)=>a.our-b.our);
  const st=(all.find(o=>o.st)||{}).st||'',hasV=all.some(o=>o.vr!==''),hasM=all.some(o=>o.mk!==''),hasN=all.some(o=>o.now!=='');
+ const DTIP={pick:'Where we would take him in your rookie draft',pos:'Position and rank at that position on our board',nfl:'Overall NFL draft pick (projected before the draft)',mk:'Expert consensus slot right after the NFL draft',diff:'Spots higher (▲) or lower (▼) we are than the experts',now:'Rank within the class in today\'s expert dynasty rankings',vr:'Rank in the class by NFL fantasy value over years 1-3 (green = top 12)'};
  const cols=[['pick','Pick','num'],['player','Player','name'],['pos','Pos',''],['col','College',''],['nfl','NFL Pick','num']].concat(hasM?[['mk','Consensus','num'],['diff','vs Consensus','num']]:[]).concat(hasN?[['now','Consensus Now','num']]:[]).concat(hasV?[['vr','NFL Result','num']]:[]);
  const cell=(c,o)=>{switch(c){case'pick':return pk(o.our);case'player':return o.p;case'pos':return o.pr;case'col':return o.col;case'nfl':return o.nfl===''?'':typeof o.nfl==='number'?o.nfl:String(o.nfl);
   case'mk':return o.mk===''?'<span class="mu">NR</span>':pk(o.mk);case'diff':{const d=o._d;return d===''?'':d>0?'<span class="up">&#9650;'+d+'</span>':d<0?'<span class="dn">&#9660;'+(-d)+'</span>':'<span class="mu">=</span>'}
   case'now':return o.now===''?'':'#'+o.now;case'vr':return o.vr===''?'<span class="mu">&ndash;</span>':'<span class="'+(o.vr<=12?'r1':o.vr<=24?'r2':'r3')+'">#'+o.vr+'</span>'}};
- $('dtbl').innerHTML='<thead><tr>'+cols.map(c=>'<th class="'+c[2]+'" data-k="'+c[0]+'">'+c[1]+(dSort===c[0]?(dDir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
+ $('dtbl').innerHTML='<thead><tr>'+cols.map(c=>'<th class="'+c[2]+'" data-k="'+c[0]+'" title="'+(DTIP[c[0]]||'')+'">'+c[1]+(dSort===c[0]?(dDir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
   r.map((o,i)=>'<tr'+(!dSort&&!ps&&!q&&i>0&&o.our%dT===1?' class="rd"':'')+'>'+cols.map(c=>'<td class="'+c[2]+'">'+cell(c[0],o)+'</td>').join('')+'</tr>').join('')+'</tbody>';
  $('dtbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(dSort===k)dDir=-dDir;else{dSort=k;dDir=(k==='player'||k==='col'||k==='pos')?1:1}drawDraft()});
  $('dcnt').textContent=r.length+' rookies';
