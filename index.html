@@ -58,7 +58,7 @@ th[data-k]::after{content:' ↕';opacity:0;font-size:10px}th[data-k]:hover::afte
 .acc b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.acc span{color:var(--mute);font-size:12px}
 .acch{color:var(--mute);font-size:12.5px;margin:2px 0 6px}
 </style></head><body>
-<header><div class="hd"><div><h1 id="ttl">RB Prospect Board</h1><div class="sub" id="sub">College production model for dynasty running backs · updated Nov 11, 2026</div></div><div class="pos" id="posw"><button id="pRB" class="on">RB</button><button id="pWR">WR</button><button id="pTE">TE</button><button id="pQB">QB</button></div></div></header>
+<header><div class="hd"><div><h1 id="ttl">RB Prospect Board</h1><div class="sub" id="sub">College production model for dynasty running backs · updated Nov 12, 2026</div></div><div class="pos" id="posw"><button id="pRB" class="on">RB</button><button id="pWR">WR</button><button id="pTE">TE</button><button id="pQB">QB</button></div></div></header>
 <nav><button id="tDevy" class="on">Devy Tracker</button><button id="tModel">Model</button><button id="tNfl">NFL Results</button><button id="tHow">How It Works</button></nav>
 <main id="howm" class="how" style="display:none">
 <section><h2>What this is</h2><p>A dynasty prospect model for quarterbacks, running backs, wide receivers and tight ends that grades players from their first college season through the NFL draft, and checks every call against what actually happened in the NFL. College and NFL stats update automatically every Tuesday.</p></section>
@@ -114,7 +114,7 @@ function prepNfl(){MODEL=Object.fromEntries((D.model||[]).map(m=>[m._id,m]));
  x['Verdict']=!x['Model Call']?'':!done?'Pending':x['Model Call']==='Likely hit'?(hit?'Hit called':'Bust'):x['Model Call']==='Long shot'?(hit?'Missed sleeper':'Correct fade'):(hit?'Toss-up hit':'Toss-up miss')})}
 function loadPos(p){POSN=p;D=DATA[p]||{};T=D.tiers||(p==='WR'?[12,24,36,2,2]:p==='TE'?[6,12,18,2,2]:p==='QB'?[6,12,24,2,2]:[15,12,9.5,2,1]);VIEWS.devy.rows=D.devy||[];VIEWS.model.rows=D.model||[];VIEWS.nfl.rows=D.nfl||[];prepNfl();
  ['RB','WR','TE','QB'].forEach(q=>$('p'+q).classList.toggle('on',p===q));
- $('ttl').textContent=p+' Prospect Board';$('sub').textContent='College production model for dynasty '+PL[p].long+' \u00b7 updated Nov 11, 2026';fillHow()}
+ $('ttl').textContent=p+' Prospect Board';$('sub').textContent='College production model for dynasty '+PL[p].long+' \u00b7 updated Nov 12, 2026';fillHow()}
 const VCLS={'Locked in':'v-hit','Breakout candidate':'v-sleeper','Regression risk':'v-bust','Watch':'v-toss','Fading':'v-pend','Hit called':'v-hit','Correct fade':'v-fade','Bust':'v-bust','Missed sleeper':'v-sleeper','Toss-up hit':'v-toss','Toss-up miss':'v-toss','Pending':'v-pend'};
 function heatRank(v){const out={};(HEAT[v]||[]).forEach(k=>{out[k]=VIEWS[v].rows.map(r=>r[k]).filter(x=>x!==''&&x!=null&&!isNaN(x)).map(Number).sort((a,b)=>a-b)});return out}
 let HR={};
