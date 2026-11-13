@@ -57,7 +57,7 @@ th[data-k]::after{content:' ↕';opacity:0;font-size:10px}th[data-k]:hover::afte
 .acc div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .acc b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.acc span{color:var(--mute);font-size:12px}
 .acch{color:var(--mute);font-size:12.5px;margin:2px 0 6px}
-nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:none;white-space:nowrap}.dr th{cursor:pointer}.dr tr.rd td{border-top:2px solid var(--ink)}.guide{margin:0 0 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 14px}.guide summary{cursor:pointer;font-weight:600}.guide dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:10px 0 6px}.guide dt{font-weight:600}.guide dd{margin:0}@media(max-width:600px){.guide dl{grid-template-columns:1fr}.guide dd{margin-bottom:6px}}.up{color:var(--t1);font-weight:600}.dn{color:var(--bad);font-weight:600}.mu{color:var(--mute)}
+nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:none;white-space:nowrap}.dr th{cursor:pointer}.dr tr.rd td{border-top:2px solid var(--ink)}.slp{margin:0 0 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 14px}.slpr{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}.slpr input[type=text],#slpIn{flex:1 1 220px;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}.slpr button,#slpSel{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}#slpGo{background:var(--ink);color:var(--bg);border-color:var(--ink)}.slpr label{display:flex;align-items:center;gap:6px}#slpMsg b{color:var(--ink)}.dr tr.tk td{opacity:.38;text-decoration:line-through}.dr tr.tk td:first-child{text-decoration:none}.dr tr.ba td{background:color-mix(in srgb,var(--t1) 14%,transparent)}.guide{margin:0 0 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px 14px}.guide summary{cursor:pointer;font-weight:600}.guide dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:10px 0 6px}.guide dt{font-weight:600}.guide dd{margin:0}@media(max-width:600px){.guide dl{grid-template-columns:1fr}.guide dd{margin-bottom:6px}}.up{color:var(--t1);font-weight:600}.dn{color:var(--bad);font-weight:600}.mu{color:var(--mute)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}.seg button{font:inherit;border:0;background:none;color:var(--mute);padding:8px 12px;cursor:pointer}.seg button.on{background:var(--ink);color:var(--bg)}
 #dcls,#dpos,#drnd,#dtm{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
 .r1{color:var(--t1);font-weight:600}.r2{color:var(--t2)}.r3{color:var(--t3)}
@@ -78,6 +78,9 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav
 </main>
 <main id="draftm" style="display:none">
 <div class="bar"><select id="dcls" aria-label="Draft class"></select><div class="seg" id="dfmt"><button data-f="SF" class="on">Superflex</button><button data-f="1QB">1QB</button></div><select id="drnd" aria-label="Rounds"><option value="3">3 rounds</option><option value="4">4 rounds</option><option value="5">5 rounds</option><option value="0">All rookies</option></select><select id="dtm" aria-label="League size"><option value="10">10 teams</option><option value="12" selected>12 teams</option><option value="14">14 teams</option></select><select id="dpos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select><input id="dq" placeholder="Search player or school"><span class="count" id="dcnt"></span></div>
+<div class="slp" id="slp"><b>Live Sleeper draft</b> <span class="mu">&mdash; cross players off as they&rsquo;re taken in your draft</span>
+<div class="slpr"><input id="slpIn" placeholder="Sleeper username or draft link" autocomplete="off" spellcheck="false"><button id="slpGo">Connect</button><select id="slpSel" style="display:none"></select><label id="slpHideL" style="display:none"><input type="checkbox" id="slpHide"> Hide taken</label><button id="slpOff" style="display:none">Disconnect</button></div>
+<div id="slpMsg" class="mu"></div></div>
 <details class="guide" id="dguide"><summary>How to read this board</summary><dl>
 <dt>Pick</dt><dd>Where we&rsquo;d take the player in your rookie draft (set rounds and league size above). Our board combines our prospect model with the expert consensus.</dd>
 <dt>Pos</dt><dd>Position and rank at that position on our board (WR2 = second WR we&rsquo;d take).</dd>
@@ -86,6 +89,7 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav
 <dt>vs Consensus</dt><dd>How far our board is from the experts: <span class="up">&#9650;3</span> = we&rsquo;re 3 spots higher on him, <span class="dn">&#9660;3</span> = 3 spots lower, = means we agree.</dd>
 <dt>Consensus Now</dt><dd>His rank within the class in today&rsquo;s FantasyPros dynasty rankings (updated weekly), so you can see how opinions have moved since the draft.</dd>
 <dt>NFL Result</dt><dd>His rank in the class for actual NFL fantasy value: PPR points scored above a starter-level line at his position (QB24 in superflex, QB12 in 1QB, RB30, WR42, TE14), added up over NFL years 1&ndash;3. <span class="r1">Green</span> = top 12 (first-round value), <span class="r2">amber</span> = 13&ndash;24, gray = later; &ndash; = no starter-level season yet. Classes still in their first three years show results so far.</dd>
+<dt>Live Sleeper draft</dt><dd>Enter your Sleeper username (or paste your draft&rsquo;s link) and choose your draft. The board switches to your league&rsquo;s settings, crosses off players as they&rsquo;re picked (checking every few seconds), highlights the best player left on our board, and counts down to your next pick. It reads Sleeper&rsquo;s public draft data only; no login, nothing is saved except in your own browser.</dd>
 <dt>Summary line</dt><dd>For past classes: how much of the best possible first-round (and two-round) value our board&rsquo;s picks actually delivered, compared with the consensus picks.</dd>
 </dl><p class="mu">Rankings data: FantasyPros expert consensus via DynastyProcess. NFL stats: nflverse. During rookie-draft season (mid-April through June) this board updates every morning.</p></details>
 <div class="sum" id="dsum"></div>
@@ -216,13 +220,14 @@ function showDraft(on){$('draftm').style.display=on?'':'none';$('tDraft').classL
  else if(dPrev){$('ttl').textContent=dPrev[0];$('sub').textContent=dPrev[1];dPrev=null}}
 function loadDraft(){if(DR){drawDraft();return}if(dBusy)return;dBusy=true;$('dtbl').innerHTML='<tr><td style="padding:30px 16px;color:var(--mute)">Loading rookie draft…</td></tr>';
  getPos('DRAFT',x=>{dBusy=false;try{const d=JSON.parse(x);DR={rows:d.r.map(a=>{const o={};d.h.forEach((c,i)=>o[c]=a[i]);return o}),acc:d.acc||[]}}catch(e){DR={rows:[],acc:[]}}
-  const ys=[...new Set(DR.rows.map(r=>r.yr))].sort((a,b)=>b-a);$('dcls').innerHTML=ys.map(y=>'<option value="'+y+'">'+y+' class</option>').join('');drawDraft()},
+  const ys=[...new Set(DR.rows.map(r=>r.yr))].sort((a,b)=>b-a);$('dcls').innerHTML=ys.map(y=>'<option value="'+y+'">'+y+' class</option>').join('');if(SLP.season&&ys.includes(SLP.season))$('dcls').value=SLP.season;drawDraft()},
   e=>{dBusy=false;$('dtbl').innerHTML='<tr><td style="padding:30px 16px;color:var(--mute)">The rookie draft did not load. Tap Rookie Draft to try again.</td></tr>'})}
 function dCap(rows,n,k){return rows}
 function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q=$('dq').value.toLowerCase();
  let r=DR.rows.filter(o=>o.yr===y&&o.f===dF);const all=r;
  dT=+$('dtm').value;const nr=+$('drnd').value;
- r=r.filter(o=>(!nr||o.our<=nr*dT)&&(!ps||o.pos===ps)&&(!q||(o.p+' '+o.col).toLowerCase().includes(q)));
+ const live=SLP.picks&&SLP.season==y;all.forEach(o=>{o._tk=live?SLP.taken[o.pos+'|'+nk(o.p)]||'':''});
+ r=r.filter(o=>(!nr||o.our<=nr*dT)&&(!ps||o.pos===ps)&&(!q||(o.p+' '+o.col).toLowerCase().includes(q))&&!(live&&SLP.hide&&o._tk));
  const key={pick:'our',player:'p',pos:'pr',col:'col',nfl:'nfl',mk:'mk',diff:'_d',now:'now',vr:'vr'};
  r.forEach(o=>o._d=o.mk!==''?o.mk-o.our:'');
  if(dSort){const k=key[dSort];r=r.slice().sort((a,b)=>{const x=a[k],z=b[k];if(x===''&&z==='')return 0;if(x==='')return 1;if(z==='')return -1;const n=!isNaN(x)&&!isNaN(z)&&x!==''&&z!=='';return (n?x-z:String(x).localeCompare(String(z),undefined,{numeric:true}))*dDir})}
@@ -230,13 +235,14 @@ function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q
  const st=(all.find(o=>o.st)||{}).st||'',hasV=all.some(o=>o.vr!==''),hasM=all.some(o=>o.mk!==''),hasN=all.some(o=>o.now!=='');
  const DTIP={pick:'Where we would take him in your rookie draft',pos:'Position and rank at that position on our board',nfl:'Overall NFL draft pick (projected before the draft)',mk:'Expert consensus slot right after the NFL draft',diff:'Spots higher (▲) or lower (▼) we are than the experts',now:'Rank within the class in today\'s expert dynasty rankings',vr:'Rank in the class by NFL fantasy value over years 1-3 (green = top 12)'};
  const cols=[['pick','Pick','num'],['player','Player','name'],['pos','Pos',''],['col','College',''],['nfl','NFL Pick','num']].concat(hasM?[['mk','Consensus','num'],['diff','vs Consensus','num']]:[]).concat(hasN?[['now','Consensus Now','num']]:[]).concat(hasV?[['vr','NFL Result','num']]:[]);
- const cell=(c,o)=>{switch(c){case'pick':return pk(o.our);case'player':return o.p;case'pos':return o.pr;case'col':return o.col;case'nfl':return o.nfl===''?'':typeof o.nfl==='number'?o.nfl:String(o.nfl);
+ const ba=live?(r.find(o=>!o._tk)||{}):{};
+ const cell=(c,o)=>{switch(c){case'pick':return o._tk?'<span class="mu" title="Taken in your draft at this pick">went '+o._tk+'</span>':pk(o.our);case'player':return o.p;case'pos':return o.pr;case'col':return o.col;case'nfl':return o.nfl===''?'':typeof o.nfl==='number'?o.nfl:String(o.nfl);
   case'mk':return o.mk===''?'<span class="mu">NR</span>':pk(o.mk);case'diff':{const d=o._d;return d===''?'':d>0?'<span class="up">&#9650;'+d+'</span>':d<0?'<span class="dn">&#9660;'+(-d)+'</span>':'<span class="mu">=</span>'}
   case'now':return o.now===''?'':'#'+o.now;case'vr':return o.vr===''?'<span class="mu">&ndash;</span>':'<span class="'+(o.vr<=12?'r1':o.vr<=24?'r2':'r3')+'">#'+o.vr+'</span>'}};
  $('dtbl').innerHTML='<thead><tr>'+cols.map(c=>'<th class="'+c[2]+'" data-k="'+c[0]+'" title="'+(DTIP[c[0]]||'')+'">'+c[1]+(dSort===c[0]?(dDir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
-  r.map((o,i)=>'<tr'+(!dSort&&!ps&&!q&&i>0&&o.our%dT===1?' class="rd"':'')+'>'+cols.map(c=>'<td class="'+c[2]+'">'+cell(c[0],o)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+  r.map((o,i)=>{const cl=[];if(!dSort&&!ps&&!q&&!live&&i>0&&o.our%dT===1)cl.push('rd');if(o._tk)cl.push('tk');if(o===ba)cl.push('ba');return '<tr'+(cl.length?' class="'+cl.join(' ')+'"':'')+(o===ba?' title="Best available on our board"':'')+'>'+cols.map(c=>'<td class="'+c[2]+'">'+cell(c[0],o)+'</td>').join('')+'</tr>'}).join('')+'</tbody>';
  $('dtbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(dSort===k)dDir=-dDir;else{dSort=k;dDir=(k==='player'||k==='col'||k==='pos')?1:1}drawDraft()});
- $('dcnt').textContent=r.length+' rookies';
+ $('dcnt').textContent=r.length+' rookies';if(live)slpStatus();
  const A=DR.acc.filter(a=>a[1]===dF),a=A.find(x=>x[0]===y),pc=v=>v===''?'-':Math.round(v*100)+'%',C=A.filter(x=>x[6]==='Complete');
  let s='';
  if(a)s='<b>'+y+(a[6]==='Complete'?' result':' so far ('+String(a[6]).replace('In progress (','').replace(')','')+')')+':</b> the first round of our board (top 12) landed <b>'+pc(a[2])+'</b> of the best possible first-round value, consensus <b>'+pc(a[3])+'</b>. Through two rounds: ours <b>'+pc(a[4])+'</b>, consensus <b>'+pc(a[5])+'</b>.';
@@ -244,6 +250,60 @@ function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q
  else s='<b>'+y+':</b> no NFL games yet.';
  if(A.length){const m=i=>A.reduce((t,x)=>t+(+x[i]||0),0)/A.length;s+=' <span class="mu">All '+A.length+' classes with NFL results ('+C.length+' complete): first round ours '+pc(m(2))+' vs consensus '+pc(m(3))+'; two rounds ours '+pc(m(4))+' vs '+pc(m(5))+'.</span>'}
  $('dsum').innerHTML=s}
+
+// ----- Live Sleeper draft (Sleeper's free read-only API; nothing is stored except in this browser) -----
+const SL='https://api.sleeper.app/v1/',SLP={draft:null,picks:null,taken:{},hide:false,season:null,timer:null,uid:null,last:0,mine:[]};
+const nk=s=>String(s||'').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g,'').replace(/[^a-z]/g,'');
+const sj=u=>fetch(SL+u).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
+const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+const smsg=h=>$('slpMsg').innerHTML=h;
+async function slpConnect(){const v=$('slpIn').value.trim();if(!v)return;smsg('Connecting…');
+ const m=v.match(/draft\/(?:nfl\/)?(\d{6,})/)||v.match(/^(\d{10,})$/);
+ if(m){slpOpen(m[1]);return}
+ try{const u=await sj('user/'+encodeURIComponent(v));if(!u||!u.user_id){smsg('No Sleeper user named <b>'+v.replace(/</g,'')+'</b>.');return}
+  SLP.uid=u.user_id;lsS('slpUser',v);const st=await sj('state/nfl').catch(()=>({season:new Date().getFullYear()}));const s0=+st.season||new Date().getFullYear();
+  let ds=[];for(const s of [s0+1,s0,s0-1]){ds=ds.concat(await sj('user/'+u.user_id+'/drafts/nfl/'+s).catch(()=>[]))}
+  ds=ds.filter(d=>d&&d.type!=='auction').sort((a,b)=>(b.start_time||b.created||0)-(a.start_time||a.created||0));
+  if(!ds.length){smsg('No Sleeper drafts found for <b>'+v.replace(/</g,'')+'</b>. You can also paste a draft link.');return}
+  $('slpSel').innerHTML='<option value="">Choose a draft…</option>'+ds.map(d=>'<option value="'+d.draft_id+'">'+((d.metadata&&d.metadata.name)||'Draft')+' · '+d.season+' · '+(d.status||'').replace('_',' ')+'</option>').join('');
+  $('slpSel').style.display='';smsg('Pick your draft.');
+  const live=ds.filter(d=>d.status==='drafting'),keep=lsG('slpDraft'),pick=ds.length===1?ds[0].draft_id:live.length===1?live[0].draft_id:keep&&ds.some(d=>d.draft_id===keep)?keep:'';if(pick){$('slpSel').value=pick;slpOpen(pick)}
+ }catch(e){smsg('Couldn’t reach Sleeper ('+e.message+'). Try again in a moment.')}}
+async function slpOpen(id){if(!id)return;clearTimeout(SLP.timer);smsg('Loading draft…');
+ try{const d=await sj('draft/'+id);SLP.draft=d;lsS('slpDraft',id);
+  const st=d.settings||{},md=d.metadata||{},sf=(st.slots_super_flex||0)>0||(st.slots_qb||0)>1||/2qb|superflex|sf/i.test(md.scoring_type||'');
+  SLP.season=+d.season;
+  // match the board to the draft: class, format, league size, all rookies
+  if([...$('dcls').options].some(o=>+o.value===SLP.season))$('dcls').value=SLP.season;
+  const f=sf?'SF':'1QB';dF=f;$('dfmt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.f===f));
+  const t=String(st.teams||12);if(![...$('dtm').options].some(o=>o.value===t))$('dtm').insertAdjacentHTML('beforeend','<option value="'+t+'">'+t+' teams</option>');$('dtm').value=t;$('drnd').value='0';dSort=null;
+  // which picks are mine (league drafts; traded picks included)
+  SLP.mine=[];const me=SLP.uid,teams=+st.teams||12,rounds=+st.rounds||4,ord=d.draft_order||{},s2r=d.slot_to_roster_id||{};
+  if(me&&ord[me]){let tp=[];if(d.league_id)tp=await sj('draft/'+id+'/traded_picks').catch(()=>[]);const myR=s2r[ord[me]];
+   for(let rd=1;rd<=rounds;rd++)for(let s=1;s<=teams;s++){const orig=s2r[s]||s;const t2=tp.find(x=>x.round===rd&&x.roster_id===orig);const owner=t2?t2.owner_id:orig;
+    if(owner===myR||(!d.league_id&&s===ord[me])){const slot=d.type==='snake'&&rd%2===0?teams+1-s:s;SLP.mine.push((rd-1)*teams+slot)}}SLP.mine.sort((a,b)=>a-b)}
+  ['slpSel','slpHideL','slpOff'].forEach(k=>$(k).style.display='');$('slpGo').style.display='none';$('slpIn').style.display='none';
+  if(!$('slpSel').options.length)$('slpSel').style.display='none';
+  await slpPoll(true)}catch(e){smsg('Couldn’t load that draft ('+e.message+'). Check the link and try again.')}}
+async function slpPoll(first){clearTimeout(SLP.timer);const d=SLP.draft;if(!d)return;
+ try{const [dd,pk]=await Promise.all([sj('draft/'+d.draft_id),sj('draft/'+d.draft_id+'/picks')]);SLP.draft=dd;SLP.picks=pk||[];SLP.last=Date.now();
+  const tk={},teams=+(dd.settings||{}).teams||12;SLP.unmatched=0;
+  SLP.picks.forEach(p=>{const m=p.metadata||{},key=(m.position||'')+'|'+nk((m.first_name||'')+' '+(m.last_name||''));tk[key]=Math.ceil(p.pick_no/teams)+'.'+String((p.pick_no-1)%teams+1).padStart(2,'0')});
+  SLP.taken=tk;if(DR)drawDraft()}catch(e){smsg('Lost touch with Sleeper; retrying…')}
+ const s=(SLP.draft||{}).status;if(s!=='complete')SLP.timer=setTimeout(slpPoll,document.hidden?60000:(s==='drafting'?12000:60000))}
+function slpStatus(){const d=SLP.draft;if(!d)return;const st=d.settings||{},teams=+st.teams||12,n=SLP.picks.length,total=teams*(+st.rounds||0);
+ const lab=x=>Math.ceil(x/teams)+'.'+String((x-1)%teams+1).padStart(2,'0'),nxt=SLP.mine.find(x=>x>n);
+ const our=Object.keys(SLP.taken).length,miss=SLP.picks.length;
+ let h='<b>'+((d.metadata&&d.metadata.name)||'Draft')+'</b> · '+(d.status==='complete'?'complete':d.status==='drafting'?'live':'not started')+' · '+n+(total?' of '+total:'')+' picks made';
+ if(nxt)h+=' · <b>your next pick: '+lab(nxt)+(nxt-n-1>0?' ('+(nxt-n-1)+' picks away)':' (you’re up)')+'</b>';
+ h+=' · <span class="mu">updated '+new Date(SLP.last).toLocaleTimeString([], {hour:'numeric',minute:'2-digit',second:'2-digit'})+'</span>';
+ h+='<br><span class="mu">Highlighted row = best player left on our board. Crossed-off players show the pick they went at.</span>';smsg(h)}
+function slpOff(){clearTimeout(SLP.timer);Object.assign(SLP,{draft:null,picks:null,taken:{},season:null,mine:[]});lsS('slpDraft',null);
+ ['slpSel','slpHideL','slpOff'].forEach(k=>$(k).style.display='none');$('slpGo').style.display='';$('slpIn').style.display='';smsg('');if(DR)drawDraft()}
+$('slpGo').onclick=slpConnect;$('slpIn').onkeydown=e=>{if(e.key==='Enter')slpConnect()};$('slpSel').onchange=()=>slpOpen($('slpSel').value);
+$('slpOff').onclick=slpOff;$('slpHide').onchange=()=>{SLP.hide=$('slpHide').checked;drawDraft()};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SLP.draft&&(SLP.draft.status!=='complete'))slpPoll()});
+(()=>{const u=lsG('slpUser');if(u)$('slpIn').value=u})();
 $('tDraft').onclick=()=>{showDraft(1);try{history.replaceState(null,'','#draft')}catch(e){}};['tDevy','tModel','tNfl','tHow'].forEach(t=>$(t).addEventListener('click',()=>{if(location.hash==='#draft')try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}));if(location.hash==='#draft')setTimeout(()=>showDraft(1),0);['tDevy','tModel','tNfl','tHow'].forEach(t=>$(t).addEventListener('click',()=>showDraft(0)));
 $('dcls').oninput=()=>{dSort=null;drawDraft()};$('dpos').oninput=drawDraft;$('drnd').oninput=drawDraft;$('dtm').oninput=drawDraft;$('dq').oninput=drawDraft;
 $('dfmt').querySelectorAll('button').forEach(b=>b.onclick=()=>{dF=b.dataset.f;$('dfmt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawDraft()});
