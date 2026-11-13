@@ -79,7 +79,7 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav
 <main id="draftm" style="display:none">
 <div class="bar"><select id="dcls" aria-label="Draft class"></select><div class="seg" id="dfmt"><button data-f="SF" class="on">Superflex</button><button data-f="1QB">1QB</button></div><select id="drnd" aria-label="Rounds"><option value="3">3 rounds</option><option value="4">4 rounds</option><option value="5">5 rounds</option><option value="0">All rookies</option></select><select id="dtm" aria-label="League size"><option value="10">10 teams</option><option value="12" selected>12 teams</option><option value="14">14 teams</option></select><select id="dpos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select><input id="dq" placeholder="Search player or school"><span class="count" id="dcnt"></span></div>
 <div class="slp" id="slp"><b>Live Sleeper draft</b> <span class="mu">&mdash; cross players off as they&rsquo;re taken in your draft</span>
-<div class="slpr"><input id="slpIn" placeholder="Sleeper username or draft link" autocomplete="off" spellcheck="false"><button id="slpGo">Connect</button><select id="slpSel" style="display:none"></select><label id="slpHideL" style="display:none"><input type="checkbox" id="slpHide"> Hide taken</label><button id="slpOff" style="display:none">Disconnect</button></div>
+<div class="slpr"><input id="slpIn" placeholder="Sleeper username, or paste a draft/mock link" autocomplete="off" spellcheck="false"><button id="slpGo">Connect</button><select id="slpSel" style="display:none"></select><label id="slpHideL" style="display:none"><input type="checkbox" id="slpHide"> Hide taken</label><button id="slpOff" style="display:none">Disconnect</button></div>
 <div id="slpMsg" class="mu"></div></div>
 <details class="guide" id="dguide"><summary>How to read this board</summary><dl>
 <dt>Pick</dt><dd>Where we&rsquo;d take the player in your rookie draft (set rounds and league size above). Our board combines our prospect model with the expert consensus.</dd>
@@ -226,7 +226,8 @@ function dCap(rows,n,k){return rows}
 function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q=$('dq').value.toLowerCase();
  let r=DR.rows.filter(o=>o.yr===y&&o.f===dF);const all=r;
  dT=+$('dtm').value;const nr=+$('drnd').value;
- const live=SLP.picks&&SLP.season==y;all.forEach(o=>{o._tk=live?SLP.taken[o.pos+'|'+nk(o.p)]||'':''});
+ const live=SLP.picks&&SLP.season==y;const lastN=s=>nk(String(s).replace(/\s+(jr|sr|ii|iii|iv|v)\.?$/i,'').split(' ').slice(-1)[0]),lc={};if(live)all.forEach(o=>{const k=o.pos+'|'+lastN(o.p);lc[k]=(lc[k]||0)+1});
+ all.forEach(o=>{o._tk=!live?'':(o.sid&&SLP.takenId[o.sid])||SLP.taken[o.pos+'|'+nk(o.p)]||(lc[o.pos+'|'+lastN(o.p)]===1&&SLP.takenLast[o.pos+'|'+lastN(o.p)])||''});
  r=r.filter(o=>(!nr||o.our<=nr*dT)&&(!ps||o.pos===ps)&&(!q||(o.p+' '+o.col).toLowerCase().includes(q))&&!(live&&SLP.hide&&o._tk));
  const key={pick:'our',player:'p',pos:'pr',col:'col',nfl:'nfl',mk:'mk',diff:'_d',now:'now',vr:'vr'};
  r.forEach(o=>o._d=o.mk!==''?o.mk-o.our:'');
@@ -252,7 +253,7 @@ function drawDraft(){if(!DR)return;const y=+$('dcls').value,ps=$('dpos').value,q
  $('dsum').innerHTML=s}
 
 // ----- Live Sleeper draft (Sleeper's free read-only API; nothing is stored except in this browser) -----
-const SL='https://api.sleeper.app/v1/',SLP={draft:null,picks:null,taken:{},hide:false,season:null,timer:null,uid:null,last:0,mine:[]};
+const SL='https://api.sleeper.app/v1/',SLP={draft:null,picks:null,taken:{},takenId:{},takenLast:{},hide:false,season:null,timer:null,uid:null,last:0,mine:[]};
 const nk=s=>String(s||'').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g,'').replace(/[^a-z]/g,'');
 const sj=u=>fetch(SL+u).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
 const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
@@ -264,9 +265,9 @@ async function slpConnect(){const v=$('slpIn').value.trim();if(!v)return;smsg('C
   SLP.uid=u.user_id;lsS('slpUser',v);const st=await sj('state/nfl').catch(()=>({season:new Date().getFullYear()}));const s0=+st.season||new Date().getFullYear();
   let ds=[];for(const s of [s0+1,s0,s0-1]){ds=ds.concat(await sj('user/'+u.user_id+'/drafts/nfl/'+s).catch(()=>[]))}
   ds=ds.filter(d=>d&&d.type!=='auction').sort((a,b)=>(b.start_time||b.created||0)-(a.start_time||a.created||0));
-  if(!ds.length){smsg('No Sleeper drafts found for <b>'+v.replace(/</g,'')+'</b>. You can also paste a draft link.');return}
+  if(!ds.length){smsg('No Sleeper league drafts found for <b>'+v.replace(/</g,'')+'</b>. For a mock draft, paste its link instead (Sleeper doesn’t list mocks).');return}
   $('slpSel').innerHTML='<option value="">Choose a draft…</option>'+ds.map(d=>'<option value="'+d.draft_id+'">'+((d.metadata&&d.metadata.name)||'Draft')+' · '+d.season+' · '+(d.status||'').replace('_',' ')+'</option>').join('');
-  $('slpSel').style.display='';smsg('Pick your draft.');
+  $('slpSel').style.display='';smsg('Pick your draft. <span class="mu">Mock drafts don’t appear here; paste the mock’s link in the box instead.</span>');
   const live=ds.filter(d=>d.status==='drafting'),keep=lsG('slpDraft'),pick=ds.length===1?ds[0].draft_id:live.length===1?live[0].draft_id:keep&&ds.some(d=>d.draft_id===keep)?keep:'';if(pick){$('slpSel').value=pick;slpOpen(pick)}
  }catch(e){smsg('Couldn’t reach Sleeper ('+e.message+'). Try again in a moment.')}}
 async function slpOpen(id){if(!id)return;clearTimeout(SLP.timer);smsg('Loading draft…');
@@ -278,7 +279,7 @@ async function slpOpen(id){if(!id)return;clearTimeout(SLP.timer);smsg('Loading d
   const f=sf?'SF':'1QB';dF=f;$('dfmt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.f===f));
   const t=String(st.teams||12);if(![...$('dtm').options].some(o=>o.value===t))$('dtm').insertAdjacentHTML('beforeend','<option value="'+t+'">'+t+' teams</option>');$('dtm').value=t;$('drnd').value='0';dSort=null;
   // which picks are mine (league drafts; traded picks included)
-  SLP.mine=[];const me=SLP.uid,teams=+st.teams||12,rounds=+st.rounds||4,ord=d.draft_order||{},s2r=d.slot_to_roster_id||{};
+  SLP.mine=[];const ok=Object.keys(d.draft_order||{});if(!SLP.uid||!(d.draft_order||{})[SLP.uid])SLP.uid=ok.length===1?ok[0]:SLP.uid;const me=SLP.uid,teams=+st.teams||12,rounds=+st.rounds||4,ord=d.draft_order||{},s2r=d.slot_to_roster_id||{};
   if(me&&ord[me]){let tp=[];if(d.league_id)tp=await sj('draft/'+id+'/traded_picks').catch(()=>[]);const myR=s2r[ord[me]];
    for(let rd=1;rd<=rounds;rd++)for(let s=1;s<=teams;s++){const orig=s2r[s]||s;const t2=tp.find(x=>x.round===rd&&x.roster_id===orig);const owner=t2?t2.owner_id:orig;
     if(owner===myR||(!d.league_id&&s===ord[me])){const slot=d.type==='snake'&&rd%2===0?teams+1-s:s;SLP.mine.push((rd-1)*teams+slot)}}SLP.mine.sort((a,b)=>a-b)}
@@ -287,14 +288,14 @@ async function slpOpen(id){if(!id)return;clearTimeout(SLP.timer);smsg('Loading d
   await slpPoll(true)}catch(e){smsg('Couldn’t load that draft ('+e.message+'). Check the link and try again.')}}
 async function slpPoll(first){clearTimeout(SLP.timer);const d=SLP.draft;if(!d)return;
  try{const [dd,pk]=await Promise.all([sj('draft/'+d.draft_id),sj('draft/'+d.draft_id+'/picks')]);SLP.draft=dd;SLP.picks=pk||[];SLP.last=Date.now();
-  const tk={},teams=+(dd.settings||{}).teams||12;SLP.unmatched=0;
-  SLP.picks.forEach(p=>{const m=p.metadata||{},key=(m.position||'')+'|'+nk((m.first_name||'')+' '+(m.last_name||''));tk[key]=Math.ceil(p.pick_no/teams)+'.'+String((p.pick_no-1)%teams+1).padStart(2,'0')});
-  SLP.taken=tk;if(DR)drawDraft()}catch(e){smsg('Lost touch with Sleeper; retrying…')}
- const s=(SLP.draft||{}).status;if(s!=='complete')SLP.timer=setTimeout(slpPoll,document.hidden?60000:(s==='drafting'?12000:60000))}
+  const tk={},ti={},tl={},teams=+(dd.settings||{}).teams||12;
+  SLP.picks.forEach(p=>{const m=p.metadata||{},lab=Math.ceil(p.pick_no/teams)+'.'+String((p.pick_no-1)%teams+1).padStart(2,'0');tk[(m.position||'')+'|'+nk((m.first_name||'')+' '+(m.last_name||''))]=lab;if(p.player_id)ti[String(p.player_id)]=lab;tl[(m.position||'')+'|'+nk(String(m.last_name||'').replace(/\s+(jr|sr|ii|iii|iv|v)\.?$/i,''))]=lab});
+  SLP.taken=tk;SLP.takenId=ti;SLP.takenLast=tl;if(DR)drawDraft()}catch(e){smsg('Lost touch with Sleeper; retrying…')}
+ const s=(SLP.draft||{}).status;if(s!=='complete')SLP.timer=setTimeout(slpPoll,document.hidden?60000:(s==='pre_draft'?30000:10000))}
 function slpStatus(){const d=SLP.draft;if(!d)return;const st=d.settings||{},teams=+st.teams||12,n=SLP.picks.length,total=teams*(+st.rounds||0);
  const lab=x=>Math.ceil(x/teams)+'.'+String((x-1)%teams+1).padStart(2,'0'),nxt=SLP.mine.find(x=>x>n);
  const our=Object.keys(SLP.taken).length,miss=SLP.picks.length;
- let h='<b>'+((d.metadata&&d.metadata.name)||'Draft')+'</b> · '+(d.status==='complete'?'complete':d.status==='drafting'?'live':'not started')+' · '+n+(total?' of '+total:'')+' picks made';
+ let h='<b>'+((d.metadata&&d.metadata.name)||'Draft')+'</b> · '+({complete:'complete',drafting:'live',paused:'paused',pre_draft:'not started'}[d.status]||d.status)+' · '+n+(total?' of '+total:'')+' picks made';
  if(nxt)h+=' · <b>your next pick: '+lab(nxt)+(nxt-n-1>0?' ('+(nxt-n-1)+' picks away)':' (you’re up)')+'</b>';
  h+=' · <span class="mu">updated '+new Date(SLP.last).toLocaleTimeString([], {hour:'numeric',minute:'2-digit',second:'2-digit'})+'</span>';
  h+='<br><span class="mu">Highlighted row = best player left on our board. Crossed-off players show the pick they went at.</span>';smsg(h)}
